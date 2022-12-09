@@ -22,14 +22,20 @@ function dbconn(){
   
 }
 
-function insert(){
+function sidoInsert(data){
   connection.connect()
-  connection.query("insert into users (name) values ('박종인')",(error,rows,fields)=>{
-    if(error) throw error;
-    console.log('User info is ',rows)
-  })
+  for(let i=0; i<data.length;i++){
+    connection.query(`INSERT INTO sido (orgCd, orgdownNm)
+    SELECT '${data[i].orgCd}', '${data[i].orgdownNm}' FROM DUAL
+    WHERE NOT EXISTS
+    (SELECT orgCd, orgdownNm FROM sido
+     WHERE orgCd = '${data[i].orgCd}' AND orgdownNm = '${data[i].orgdownNm}' )`,(error,rows,fields)=>{
+      if(error) throw error;
+      console.log('User info is ',rows)
+    })
+  }
   connection.end();
 }
 
 exports.dbconn = dbconn;
-exports.insert = insert;
+exports.sidoInsert = sidoInsert;
